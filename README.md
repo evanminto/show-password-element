@@ -7,23 +7,23 @@ Web component for toggling visiblity of a password field
 ### HTML
 
 ```html
-<script src="path/to/@evanminto/show-password-element/browser.js">
+<script src="path/to/@evanminto/show-password-element/dist/browser.js">
 
 <!-- Base styles -->
-<link rel="stylesheet" src="path/to/@evanminto/show-password-element/base.css">
+<link rel="stylesheet" src="path/to/@evanminto/show-password-element/dist/base.css">
 
 <!-- Overlay layout styles (optional) -->
-<link rel="stylesheet" src="path/to/@evanminto/show-password-element/overlay-inline-end.css">
+<link rel="stylesheet" src="path/to/@evanminto/show-password-element/dist/overlay-inline-end.css">
 ```
 
 ### ES Modules
 
-You can also load the component directly in your JavaScript, which allows you to define your own custom name for the element.
+You can also load the component directly in your JavaScript, which allows you to define your own custom name for the element or control the timing of module loading and custom element definition.
 
 ```js
-import ShowPasswordElement from '@evanminto/show-password-element';
+import { ShowPasswordElement } from '@evanminto/show-password-element';
 
-customElement.define('custom-name', ShowPasswordElement);
+customElement.define('show-password-element', ShowPasswordElement);
 ```
 
 ## Usage
