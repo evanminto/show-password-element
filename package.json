@@ -1,0 +1,9 @@
+{
+  "name": "@evanminto/show-password-element",
+  "version": "0.1.0",
+  "description": "Web component for toggling visiblity of a password field",
+  "main": "ShowPasswordElement.js",
+  "repository": "git@github.com:evanminto/show-password-element.git",
+  "author": "Evan Minto <evan.minto@gmail.com>",
+  "license": "MIT"
+}
