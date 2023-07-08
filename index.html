@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Show Password Element - Standalone</title>
+
+    <script type="module">
+      import ShowPasswordElement from './ShowPasswordElement.js';
+
+      customElements.define('show-password', ShowPasswordElement);
+    </script>
+
+    <link rel="stylesheet" href="./base.css">
+    <link rel="stylesheet" href="./overlay-inline-end.css">
+
+    <style>
+      input {
+        padding: 0.5rem;
+      }
+
+      show-password button {
+        background: none;
+        border: none;
+        appearance: none;
+        padding: 0.25rem;
+      }
+
+      show-password button[aria-pressed='true'] {
+        background: lightgray;
+      }
+    </style>
+  </head>
+
+  <body>
+    <label for="pw">Password</label>
+
+    <show-password>
+      <input type="password">
+      <button slot="toggle">👁️</button>
+    </show-password>
+
+    <input type="password">
+  </body>
+</html>

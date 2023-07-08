@@ -1,0 +1,24 @@
+show-password {
+  /* Override this to avoid overlapping the toggle on the text */
+  --show-password-gutter: 0rem;
+
+  block-size: fit-content;
+  inline-size: fit-content;
+  display: grid;
+  grid-template: 1fr / 1fr auto;
+}
+
+show-password input {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  padding-inline-end: var(--show-password-gutter);
+}
+
+show-password::part(toggle),
+show-password button[slot='toggle'],
+show-password [slot='toggle'] button {
+  align-self: center;
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0.5rem;
+}
