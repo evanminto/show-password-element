@@ -1,0 +1,2 @@
+show-password{--show-password-gutter:0rem;grid-template:1fr/1fr auto;block-size:-moz-fit-content;block-size:fit-content;inline-size:-moz-fit-content;inline-size:fit-content;display:grid}show-password input{grid-area:1/1/auto/-1;padding-inline-end:var(--show-password-gutter)}show-password::part(toggle),show-password button[slot=toggle],show-password [slot=toggle] button{grid-area:1/2;align-self:center;margin:.5rem}
+/*# sourceMappingURL=overlay-inline-end.css.map */
