@@ -33,6 +33,7 @@
     "parcel": "^2.9.3"
   },
   "scripts": {
-    "build": "parcel build"
+    "build": "parcel build",
+    "preinstall": "yarn build"
   }
 }
