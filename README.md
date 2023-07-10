@@ -36,12 +36,54 @@ customElement.define('show-password-element', ShowPasswordElement);
 </show-password>
 ```
 
+### Specify Exact Input
+
+```html
+<show-password>
+  <input type="text">
+  <!-- Specify this password and ignore the text input -->
+  <input type="password" data-behavior="input">
+</show-password>
+```
+
+### Custom Toggle Label and Styles
+
+```html
+<show-password>
+  <input type="password">
+  <span slot="toggle-content">Show PW</span>
+</show-password>
+
+<style>
+  show-password::part(toggle) {
+    color: red;
+  }
+
+  show-password::part(toggle-pressed) {
+    color: darkred;
+  }
+</style>
+```
+
 ### Custom Toggle Button
 
 ```html
 <show-password>
   <input type="password">
-  <button slot="toggle">Show</button>
+  <button slot="toggle" data-behavior="toggle">Show</button>
+</show-password>
+```
+
+### Two Custom Buttons
+
+```html
+<show-password>
+  <input type="password">
+
+  <div slot="toggle">
+    <button data-behavior="show">Show</button>
+    <button data-behavior="hide">Hide</button>
+  </div>
 </show-password>
 ```
 
@@ -55,10 +97,35 @@ Represents whether the password text is currently visible. Adding or removing it
 
 ### visible
 
-Read-write boolean property representing the same value as the `visible` attribute.
+Read-write boolean property representing the same value as the `visible` attribute. There is no `toggle()` method, but you can easily do the following to perform a toggle in JavaScript:
+
+```js
+showPassword.visible = !showPassword.visible;
+```
 
 ## Events
 
 ### show-password-toggle
 
-Fired on the `<show-password>` element when the visibility has been toggled
+Fired on the `<show-password>` element when the visibility has been toggled. If
+canceled, the toggle will not occur.
+
+## Behaviors
+
+Behaviors can be assigned to descendants of `<show-password>` using the
+`data-behavior` attribute, enabling you to bring your own markup and hook it up
+to the element’s built-in behaviors.
+
+### toggle
+
+When clicked, toggles `visible` on and off. The toggle element will also have
+its `aria-pressed` attribute toggled between `true` and `false` to reflect the
+current state for assistive technology.
+
+### show
+
+When clicked, sets `visible` to `true`.
+
+### hide
+
+When clicked, sets `visible` to `false`.

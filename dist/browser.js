@@ -1,16 +1,51 @@
 /**
- * Allows the user to toggle the visibility of the text in a password field
+ * @typedef {'input'|'toggle'|'show'|'hide'} ShowPasswordElementBehavior
+ */ /**
+ * Allows the user to toggle the visibility of the text in a password field.
+ *
+ * ---
  *
  * @customElement show-password
  * @attr input
  * @attr visible
- * @fires toggle
+ * @slot toggle
+ * @slot toggle-content
+ * @part toggle
+ * @part toggle-pressed
+ * @fires show-password-toggle
+ *
+ * ---
+ *
+ * ### Basic Usage:
  *
  * ```html
  * <show-password>
  *   <input type="password">
- *   <button slot="hide-button">Hide PW</button>
- *   <button slot="show-button">Show PW</button>
+ * </show-password>
+ * ```
+ *
+ * ---
+ *
+ * ### Custom Button:
+ *
+ * ```html
+ * <show-password>
+ *   <input type="password">
+ *   <button type="button" slot="toggle" data-behavior="toggle">Show</button>
+ * </show-password>
+ * ```
+ *
+ * ---
+ *
+ * ### Show/Hide Buttons:
+ *
+ * ```html
+ * <show-password>
+ *   <input type="password">
+ *   <span slot="toggle">
+ *     <button type="button" data-behavior="show">Show</button>
+ *     <button type="button" data-behavior="hide">Hide</button>
+ *   </span>
  * </show-password>
  * ```
  */ class $db8d7ac320c22067$export$2e2bcd8739ae039 extends HTMLElement {
@@ -27,7 +62,7 @@
    * @param {string|null} newVal
    */ attributeChangedCallback(name, oldVal, newVal) {
         if (name === "visible") this.#visible = newVal !== null;
-        this.#updateInput();
+        this.#updateDom();
     }
     connectedCallback() {
         this.attachShadow({
@@ -36,28 +71,34 @@
         if (!this.shadowRoot) return;
         this.shadowRoot.innerHTML = `
       <slot></slot>
-      <slot name="toggle"><button type="button" part="toggle" aria-pressed="false">Show</button></slot>
+
+      <slot name="toggle">
+        <button type="button" part="toggle">
+          <slot name="toggle-content">Show</slot>
+        </button>
+      </slot>
 
       <style>
         :host {
           display: inline-block;
         }
 
-        [part="toggle"] {
+        button {
           background: ButtonFace;
           color: ButtonText;
           border-color: ButtonBorder;
         }
 
-        [part="toggle"][aria-pressed="true"] {
+        button[aria-pressed="true"] {
           background: AccentColor;
           color: AccentColorText;
           border-color: AccentColor;
         }
       </style>
     `;
-        this.#toggleSlot?.addEventListener("click", this.#handleClick.bind(this));
-        this.#updateInput();
+        this.#shadowButton?.addEventListener("click", this.#handleClickShadowButton.bind(this));
+        this.addEventListener("click", this.#handleClick.bind(this));
+        this.#updateDom();
     }
     /**
    * @returns {boolean}
@@ -70,44 +111,89 @@
         this.#visible = value;
         if (this.#visible) this.setAttribute("visible", "");
         else this.removeAttribute("visible");
-        this.#updateInput();
+        this.#updateDom();
     }
     #visible = false;
     /**
-   * @returns {HTMLSlotElement|null}
-   */ get #toggleSlot() {
-        return this.shadowRoot?.querySelector('slot[name="toggle"]') || null;
-    }
-    /**
    * @returns {HTMLButtonElement|null}
-   */ get #toggle() {
-        return this.querySelector('button[slot="toggle"], [slot="toggle"] button') || this.shadowRoot?.querySelector('button[part~="toggle"]') || null;
+   */ get #shadowButton() {
+        return this.shadowRoot?.querySelector("button") || null;
     }
     /**
-   * @returns {HTMLInputElement|null}
-   */ get #passwordInput() {
-        return this.querySelector('input:is([type="text"], [type="password"])') || null;
+   * @returns {HTMLElement|null}
+   */ get #toggleButton() {
+        return this.#getByBehavior("toggle") || this.#shadowButton;
+    }
+    /**
+   * @param {ShowPasswordElementBehavior} behavior
+   * @returns {HTMLElement|null}
+   */ #getByBehavior(behavior) {
+        return this.querySelector(`[data-behavior="${behavior}"]`) || null;
+    }
+    /**
+   * @param {ShowPasswordElementBehavior} behavior
+   * @param {string}                      elementSelector
+   * @returns {HTMLElement[]}
+   */ #getAllByBehavior(behavior, elementSelector = "*") {
+        // @ts-ignore
+        return [
+            ...this.querySelectorAll(`${elementSelector}[data-behavior="${behavior}"]`)
+        ];
+    }
+    /**
+   * @param {HTMLElement}                   el
+   * @param {ShowPasswordElementBehavior}   behavior
+   * @returns {boolean}
+   */ #elementHasBehavior(el, behavior) {
+        return Boolean(el.closest(`[data-behavior="${behavior}"]`));
+    }
+    /**
+   * @returns {HTMLInputElement[]}
+   */ get #passwordInputs() {
+        /** @type {HTMLInputElement[]} */ // @ts-ignore
+        const inputs = this.#getAllByBehavior("input", "input");
+        if (inputs.length === 0) // @ts-ignore
+        return [
+            ...this.querySelectorAll('input:is([type="text"], [type="password"])')
+        ];
+        return inputs;
+    }
+    /**
+   * @returns {void}
+   */ #tryToggle() {
+        if (this.dispatchEvent(new CustomEvent("show-password-toggle", {
+            bubbles: true
+        }))) {
+            this.visible = !this.visible;
+            this.#updateDom();
+        }
+    }
+    /**
+   * @returns {void}
+   */ #handleClickShadowButton(event) {
+        console.log(event.currentTarget, event.target);
+        this.#tryToggle();
     }
     /**
    * @param {MouseEvent} event
    * @returns {void}
    */ #handleClick(event) {
-        if (!(event.target instanceof HTMLButtonElement)) return;
-        if (this.dispatchEvent(new CustomEvent("show-password-toggle", {
-            bubbles: true
-        }))) {
-            this.visible = !this.visible;
-            this.#updateInput();
-        }
+        /** @type {HTMLElement} */ // @ts-ignore
+        const el = event.target;
+        if (this.#elementHasBehavior(el, "toggle") || this.#elementHasBehavior(el, "show") && !this.visible || this.#elementHasBehavior(el, "hide") && this.visible) this.#tryToggle();
     }
     /**
    * @returns {void}
-   */ #updateInput() {
+   */ #updateDom() {
         const { visible: visible } = this;
-        const passwordInput = this.#passwordInput;
-        const toggle = this.#toggle;
-        if (passwordInput) passwordInput.type = visible ? "text" : "password";
+        const passwordInputs = this.#passwordInputs;
+        const toggle = this.#toggleButton;
+        const shadowButton = this.#shadowButton;
+        [
+            ...passwordInputs
+        ].forEach((input)=>input.type = visible ? "text" : "password");
         if (toggle) toggle.setAttribute("aria-pressed", visible ? "true" : "false");
+        if (shadowButton) shadowButton.setAttribute("part", visible ? "toggle toggle-pressed" : "toggle");
     }
 }
 

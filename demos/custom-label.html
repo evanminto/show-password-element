@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Show Password Element - Standalone</title>
+
+    <script type="module">
+      import { ShowPasswordElement } from '../dist/index.js';
+
+      customElements.define('show-password', ShowPasswordElement);
+    </script>
+
+    <link rel="stylesheet" href="../dist/base.css">
+
+    <style>
+      show-password::part(toggle) {
+        background-color: transparent;
+        color: darkblue;
+        border-color: darkblue;
+        border-radius: 5rem;
+        padding: 0.5rem;
+        width: 3rem;
+        height: 3rem;
+      }
+
+      show-password::part(toggle-pressed) {
+        background-color: darkblue;
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <label for="pw">Password</label>
+
+    <show-password>
+      <input type="password">
+      <span slot="toggle-content">👁️</span>
+    </show-password>
+  </body>
+</html>

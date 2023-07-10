@@ -10,6 +10,12 @@
     </script>
 
     <link rel="stylesheet" href="../dist/base.css">
+
+    <style>
+      input {
+        padding: 0.5rem;
+      }
+    </style>
   </head>
 
   <body>
@@ -17,6 +23,11 @@
 
     <show-password>
       <input id="pw" type="password">
+
+      <span slot="toggle">
+        <button type="button" data-behavior="show">Show</button>
+        <button type="button" data-behavior="hide">Hide</button>
+      </span>
     </show-password>
   </body>
 </html>
